@@ -36,12 +36,24 @@ const ROLE_LABEL: Record<ChatHistoryTurn["role"], string> = {
   operator: "Staff",
 };
 
-function actorBlock(actor: ChatActor): string {
-  if (actor.kind === "user") {
-    const name = actor.displayName ? `\nname: ${actor.displayName}` : "";
-    return `Signed in.\nid: ${actor.id}${name}`;
+/** One physical line. A newline in an id or display name must not add a second field. */
+function oneLine(value: string): string {
+  let out = "";
+  for (const char of value) {
+    const code = char.charCodeAt(0);
+    out += code <= 31 || code === 127 ? " " : char;
   }
-  return `Not signed in.\nvisitor: ${actor.id}`;
+  return out.replace(/ {2,}/g, " ").trim();
+}
+
+function actorBlock(actor: ChatActor): string {
+  const id = oneLine(actor.id);
+  if (actor.kind === "user") {
+    const name = actor.displayName ? oneLine(actor.displayName) : "";
+    const nameLine = name ? `\nname: ${name}` : "";
+    return `Signed in.\nid: ${id}${nameLine}`;
+  }
+  return `Not signed in.\nvisitor: ${id}`;
 }
 
 function referenceBlock(references: ChatReference[]): string {
@@ -56,7 +68,13 @@ function referenceBlock(references: ChatReference[]): string {
 
 function historyBlock(history: ChatHistoryTurn[]): string {
   if (history.length === 0) return "";
-  return history.map((turn) => `${ROLE_LABEL[turn.role]}: ${turn.body}`).join("\n");
+  return history
+    .map((turn) => {
+      // Indent continuation lines so a stored body cannot start a new role line.
+      const body = turn.body.replace(/[\r\n]+/g, "\n  ");
+      return `${ROLE_LABEL[turn.role]}: ${body}`;
+    })
+    .join("\n");
 }
 
 /**

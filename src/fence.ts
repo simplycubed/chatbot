@@ -6,13 +6,13 @@ const FENCE_TAGS = [
   "untrusted-question",
 ] as const;
 
-/** Remove fence tags so untrusted text cannot close a block or open the verified one. */
+/**
+ * Remove fence tags so untrusted text cannot close a block or open the verified one.
+ * Matching is case-insensitive and allows whitespace, newlines, and attributes inside the tag.
+ */
 export function neutralize(text: string): string {
-  let out = text;
-  for (const tag of FENCE_TAGS) {
-    out = out.replaceAll(`<${tag}>`, "").replaceAll(`</${tag}>`, "");
-  }
-  return out;
+  const pattern = new RegExp(FENCE_TAGS.map((tag) => `<\\s*/?\\s*${tag}\\b[^>]*>`).join("|"), "gi");
+  return text.replace(pattern, "");
 }
 
 export function fence(tag: (typeof FENCE_TAGS)[number], text: string): string {
