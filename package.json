@@ -1,6 +1,6 @@
 {
   "name": "@simplycubed/chatbot",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Read-only chat turn for a signed-in product or a public page. The host supplies the prompt, the references, and who is speaking.",
   "type": "module",
   "sideEffects": false,
