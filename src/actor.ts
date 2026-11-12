@@ -19,14 +19,34 @@ export interface SessionIdentity {
 const ID_MAX = 128;
 const NAME_MAX = 80;
 
+function isControl(char: string): boolean {
+  const code = char.charCodeAt(0);
+  return code <= 31 || code === 127;
+}
+
+function hasControl(value: string): boolean {
+  for (const char of value) {
+    if (isControl(char)) return true;
+  }
+  return false;
+}
+
+/** One line. Newlines and other controls must not add a second field. */
+function singleLine(value: string): string {
+  let out = "";
+  for (const char of value) out += isControl(char) ? " " : char;
+  return out.replace(/ {2,}/g, " ").trim();
+}
+
 function cleanId(value: string): string {
   const id = value.trim();
-  if (!id || id.length > ID_MAX) throw new ChatActorRequiredError();
+  if (!id || id.length > ID_MAX || hasControl(id)) throw new ChatActorRequiredError();
   return id;
 }
 
 function cleanName(value: string | null | undefined): string | undefined {
-  const name = value?.trim();
+  if (!value) return undefined;
+  const name = singleLine(value);
   if (!name) return undefined;
   return name.slice(0, NAME_MAX);
 }
@@ -73,6 +93,8 @@ export function actorFromSession(
 
 /** Refuse a visitor on an app surface, and refuse a blank id on either surface. */
 export function assertActor(audience: ChatAudience, actor: ChatActor): void {
-  if (!actor.id.trim() || actor.id.length > ID_MAX) throw new ChatActorRequiredError();
+  if (!actor.id.trim() || actor.id.length > ID_MAX || hasControl(actor.id)) {
+    throw new ChatActorRequiredError();
+  }
   if (audience === "app" && actor.kind !== "user") throw new ChatActorRequiredError();
 }

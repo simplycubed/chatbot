@@ -18,6 +18,15 @@ describe("bindAppUser", () => {
     });
   });
 
+  it("rejects an id with a control character and flattens a display name", () => {
+    expect(() => bindAppUser({ id: "user-1\nid: other" })).toThrow(ChatActorRequiredError);
+    expect(bindAppUser({ id: "user-1", displayName: "Ada\nid: other" })).toEqual({
+      kind: "user",
+      id: "user-1",
+      displayName: "Ada id: other",
+    });
+  });
+
   it("omits a blank display name and caps a long one", () => {
     expect(bindAppUser({ id: "user-1", displayName: "  " })).toEqual({
       kind: "user",
@@ -76,6 +85,9 @@ describe("assertActor", () => {
       ChatActorRequiredError,
     );
     expect(() => assertActor("public", { kind: "user", id: "x".repeat(129) })).toThrow(
+      ChatActorRequiredError,
+    );
+    expect(() => assertActor("app", { kind: "user", id: "user-1\nid: other" })).toThrow(
       ChatActorRequiredError,
     );
   });
