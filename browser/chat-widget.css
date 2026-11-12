@@ -1,0 +1,28 @@
+.chat-widget {
+  color: CanvasText;
+  background: Canvas;
+  font: inherit;
+}
+
+.chat-widget__panel {
+  background: var(--chat-surface, Canvas);
+  color: var(--chat-ink, CanvasText);
+}
+
+.chat-bubble--customer {
+  background: var(--chat-accent, CanvasText);
+  color: var(--chat-accent-ink, Canvas);
+}
+
+.chat-bubble--agent {
+  background: var(--chat-bubble-agent, Canvas);
+  color: var(--chat-ink, CanvasText);
+}
+
+.chat-notice--error {
+  color: var(--chat-danger, CanvasText);
+}
+
+.chat-notice--warning {
+  color: var(--chat-warning, CanvasText);
+}

@@ -1,0 +1,74 @@
+{
+  "name": "@simplycubed/chatbot",
+  "version": "0.1.0",
+  "description": "Read-only chat turn for a signed-in product or a public page. The host supplies the prompt, the references, and who is speaking.",
+  "type": "module",
+  "sideEffects": false,
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "default": "./dist/testing/index.js"
+    },
+    "./browser/chat-widget.js": "./dist/browser/chat-widget.js",
+    "./browser/chat-widget.css": "./browser/chat-widget.css",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "testing": [
+        "./dist/testing/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "browser/chat-widget.css"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@11.5.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simplycubed/chatbot.git"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && esbuild src/browser/main.ts --bundle --format=esm --outfile=dist/browser/chat-widget.js --platform=browser",
+    "clean": "rm -rf dist coverage test-results",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . && prettier --check .",
+    "lint:eslint": "eslint .",
+    "lint:fix": "eslint . --fix && prettier --write .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "no-leaks": "node scripts/no-leaks.mjs",
+    "assert-tag-version": "node scripts/assert-tag-version.mjs",
+    "check": "pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm build && pnpm no-leaks"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@types/node": "^25.9.1",
+    "@vitest/coverage-v8": "4.1.8",
+    "esbuild": "^0.25.12",
+    "eslint": "^9.39.4",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.60.1",
+    "vitest": "4.1.11"
+  }
+}
