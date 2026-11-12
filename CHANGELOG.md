@@ -9,7 +9,15 @@ config change.
 
 ## [Unreleased]
 
-## [0.1.0] - Unreleased
+## [0.1.1] - 2026-11-13
+
+### Fixed
+
+- Fence tags are stripped regardless of case, whitespace, or attributes, so untrusted text cannot close a block or open the verified actor block.
+- A newline in stored history is indented, so a customer message cannot start a staff line.
+- An actor id that contains a control character is rejected. A display name stays on one line.
+
+## [0.1.0] - 2026-11-12
 
 ### Added
 
